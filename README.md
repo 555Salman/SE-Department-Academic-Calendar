@@ -1,6 +1,6 @@
 # SE Department Academic Calendar
 
-A full-stack academic calendar management system built for the **Department of Software Engineering, Faculty of Engineering, University of Jaffna**. It supports role-based event management, approval workflows, notifications, and resource booking.
+A full-stack academic calendar management system built for the **Department of Computer Engineering, Faculty of Engineering, University of Jaffna**. It supports role-based event management, approval workflows, notifications, and resource booking.
 
 ---
 
@@ -207,5 +207,5 @@ MIT License — Free for educational use.
 
 ## Credits
 
-Built for the **Department of Software Engineering**
+Built for the **Department of Computer Engineering**
 Faculty of Engineering, University of Jaffna, Sri Lanka
