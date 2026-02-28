@@ -1,7 +1,7 @@
 import type { User, Event, Calendar, EventPermissions } from '../types';
 
 /** Roles that have staff-level or higher access */
-const STAFF_LIKE_ROLES = ['STAFF', 'LECTURER', 'INSTRUCTOR', 'TECHNICAL_OFFICER', 'HEAD_OF_DEPARTMENT', 'ADMIN'] as const;
+const STAFF_LIKE_ROLES = ['LECTURER', 'INSTRUCTOR', 'TECHNICAL_OFFICER', 'HEAD_OF_DEPARTMENT', 'ADMIN'] as const;
 const ELEVATED_ROLES = ['HEAD_OF_DEPARTMENT', 'ADMIN'] as const;
 
 /**
@@ -75,22 +75,6 @@ export const getEventPermissions = (
     }
   }
 
-  // Legacy STAFF role (kept for backwards compatibility)
-  if (user.role === 'STAFF') {
-    const canModify = isManager || isCreator;
-    switch (event.visibility) {
-      case 'PRIVATE':
-        if (isCreator) return { canView: true, canEdit: true, canDelete: true, viewMode: 'FULL' };
-        return { canView: false, canEdit: false, canDelete: false, viewMode: 'HIDDEN' };
-      case 'STAFF_ONLY':
-        return { canView: true, canEdit: canModify, canDelete: canModify, viewMode: 'FULL' };
-      case 'BUSY_ONLY':
-      case 'PUBLIC':
-      default:
-        return { canView: true, canEdit: canModify, canDelete: canModify, viewMode: 'FULL' };
-    }
-  }
-
   // Student permissions
   if (user.role === 'STUDENT') {
     switch (event.visibility) {
@@ -116,7 +100,7 @@ export const canCreateEvent = (user: User | null, calendar: Calendar): boolean =
   if (!user) return false;
   if (user.role === 'ADMIN' || user.role === 'HEAD_OF_DEPARTMENT') return true;
   if (
-    (user.role === 'LECTURER' || user.role === 'INSTRUCTOR' || user.role === 'STAFF') &&
+    (user.role === 'LECTURER' || user.role === 'INSTRUCTOR') &&
     calendar.managers.includes(user.id)
   ) return true;
   return false;
@@ -129,7 +113,7 @@ export const canManageCalendar = (user: User | null, calendar: Calendar): boolea
   if (!user) return false;
   if (user.role === 'ADMIN' || user.role === 'HEAD_OF_DEPARTMENT') return true;
   if (
-    (user.role === 'LECTURER' || user.role === 'INSTRUCTOR' || user.role === 'STAFF') &&
+    (user.role === 'LECTURER' || user.role === 'INSTRUCTOR') &&
     calendar.managers.includes(user.id)
   ) return true;
   return false;

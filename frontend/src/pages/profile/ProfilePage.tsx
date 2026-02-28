@@ -63,7 +63,10 @@ export default function ProfilePage() {
             <p className="text-sm text-gray-500">Role</p>
             <p className="font-semibold text-gray-900">
               {user?.role === 'ADMIN' && 'Administrator'}
-              {user?.role === 'STAFF' && 'Lecturer / Staff'}
+              {user?.role === 'HEAD_OF_DEPARTMENT' && 'Head of Department'}
+              {user?.role === 'LECTURER' && 'Lecturer'}
+              {user?.role === 'INSTRUCTOR' && 'Instructor'}
+              {user?.role === 'TECHNICAL_OFFICER' && 'Technical Officer'}
               {user?.role === 'STUDENT' && `Student - ${user?.department || 'Computer Engineering'}`}
             </p>
           </div>

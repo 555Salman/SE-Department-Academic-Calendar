@@ -5,7 +5,7 @@ const { verifyToken, authorizeRoles } = require('../middlewares/authMiddleware')
 // TO Dashboard
 router.get('/dashboard',
   verifyToken,
-  authorizeRoles('TO'),
+  authorizeRoles('TECHNICAL_OFFICER'),
   (req, res) => {
     res.json({
       message: 'Welcome Technical Officer Dashboard',
