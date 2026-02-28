@@ -28,6 +28,7 @@ A production-quality, **frontend-only** web application with an Outlook-inspired
 ## 📦 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 18.x or higher
 - **npm** 9.x or higher
 
@@ -48,11 +49,11 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Demo Credentials
 
-| Role | Email | Password | Access Level |
-|------|-------|----------|--------------|
-| **Admin** | `admin@uoj.lk` | `admin123` | Full system access |
-| **Staff** | `rajesh@uoj.lk` | `staff123` | Create/edit managed calendars |
-| **Student** | `arun@student.uoj.lk` | `student123` | Read-only access |
+| Role        | Email                 | Password     | Access Level                  |
+| ----------- | --------------------- | ------------ | ----------------------------- |
+| **Admin**   | `admin@uoj.lk`        | `admin123`   | Full system access            |
+| **Staff**   | `rajesh@uoj.lk`       | `staff123`   | Create/edit managed calendars |
+| **Student** | `arun@student.uoj.lk` | `student123` | Read-only access              |
 
 ## 📁 Project Structure
 
@@ -105,6 +106,7 @@ department-calendar/
 ## 🎯 Role-Based Permissions
 
 ### Student
+
 - ✅ View public events (full details)
 - ✅ View staff events (limited - shows "Staff Event")
 - ✅ View busy events (shows "Busy" only)
@@ -113,6 +115,7 @@ department-calendar/
 - ✅ Toggle calendar visibility
 
 ### Staff
+
 - ✅ All student permissions
 - ✅ View staff-only events (full details)
 - ✅ Create/edit/delete in managed calendars
@@ -120,6 +123,7 @@ department-calendar/
 - ❌ No admin panel access
 
 ### Admin
+
 - ✅ Full access to everything
 - ✅ Create/edit/delete all events
 - ✅ Manage calendars and users
@@ -129,18 +133,21 @@ department-calendar/
 ## 🗓️ Calendar Views
 
 ### Day View
+
 - Hourly time grid (8 AM - 6 PM, scrollable)
 - Drag-and-drop scheduling
 - Resize events for duration
 - Click empty slot to create
 
 ### Week View
+
 - 7-day column layout
 - Time gutter on left
 - Drag events between days
 - Resize vertically
 
 ### Month View
+
 - Standard month grid
 - Multiple events per day
 - Event badges with colors
@@ -158,18 +165,21 @@ department-calendar/
 ## 🔧 Admin Features
 
 ### Calendar Management
+
 - Create/edit/delete calendars
 - Set colors and visibility
 - Assign calendar managers
 - Cascade delete events
 
 ### User Management
+
 - View all users
 - Assign roles
 - View user details
 - Deactivate accounts
 
 ### Audit Log
+
 - Track all changes
 - Filter by action/entity
 - See who and when
@@ -178,6 +188,7 @@ department-calendar/
 ## 💾 Data Persistence
 
 All data stored in **LocalStorage**:
+
 - Events
 - Calendars
 - Users (demo)
@@ -205,15 +216,19 @@ npx tsc --noEmit
 ## 🎨 Customization
 
 ### Add Event Categories
+
 Edit `src/types/index.ts`:
+
 ```typescript
-export type EventCategory = 'LECTURE' | 'LAB' | 'EXAM' | 'YOUR_TYPE' | 'OTHER';
+export type EventCategory = "LECTURE" | "LAB" | "EXAM" | "YOUR_TYPE" | "OTHER";
 ```
 
 ### Add Calendars
+
 Edit `src/data/mockData.ts` in `mockCalendars` array.
 
 ### Change Colors
+
 Edit calendar colors in `mockData.ts` or theme in `tailwind.config.js`.
 
 ## 🌐 Browser Support
@@ -244,17 +259,23 @@ Edit calendar colors in `mockData.ts` or theme in `tailwind.config.js`.
 ## 🐛 Troubleshooting
 
 ### Port in use
+
 Change port in `vite.config.ts`:
+
 ```typescript
-server: { port: 3000 }
+server: {
+  port: 3000;
+}
 ```
 
 ### Clear data
+
 ```javascript
 localStorage.clear();
 ```
 
 ### Reinstall dependencies
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
@@ -271,5 +292,7 @@ Built for the Department of Computer Engineering, University of Jaffna
 ---
 
 **Note:** This is a frontend-only demo. For production, implement proper backend with authentication and database.
+
 # se-department-calendar-backend
+
 Backend service for the SE Department Calendar System
