@@ -176,22 +176,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">or</span>
-            </div>
-          </div>
-
-          {/* Outlook Sign In */}
-          <button className="btn-outline w-full">
-            <Mail className="w-5 h-5" />
-            Sign in with Outlook
-          </button>
-
           {/* Sign Up Link */}
           <p className="mt-6 text-center text-gray-500">
             Don't have an account?{' '}

@@ -5,8 +5,6 @@ const authController = require('../controllers/authController');
 const { authLimiter } = require('../middlewares/rateLimiter');
 const { body } = require('express-validator');
 const { validate } = require('../middlewares/validationMiddleware');
-const zodValidate = require('../middlewares/zodValidate');
-const { LoginSchema, SignupSchema, ForgotPasswordSchema, ResetPasswordSchema } = require('../utils/zodSchemas');
 
 // ===============================
 // 🔐 Authentication Routes
@@ -18,7 +16,6 @@ const { LoginSchema, SignupSchema, ForgotPasswordSchema, ResetPasswordSchema } =
 router.post(
   '/signup',
   authLimiter,
-  zodValidate(SignupSchema),
   [
     body('first_name')
       .trim()
@@ -48,7 +45,6 @@ router.post(
 router.post(
   '/login',
   authLimiter,
-  zodValidate(LoginSchema),
   [
     body('email')
       .isEmail()
@@ -68,7 +64,6 @@ router.post(
 router.post(
   '/forgot-password',
   authLimiter,
-  zodValidate(ForgotPasswordSchema),
   [
     body('email')
       .isEmail()
@@ -84,7 +79,6 @@ router.post(
 router.post(
   '/reset-password',
   authLimiter,
-  zodValidate(ResetPasswordSchema),
   [
     body('token')
       .notEmpty()

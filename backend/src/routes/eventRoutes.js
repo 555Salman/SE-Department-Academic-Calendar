@@ -6,8 +6,6 @@ const eventController = require('../controllers/eventController');
 
 const { body } = require('express-validator');
 const { validate } = require('../middlewares/validationMiddleware');
-const zodValidate = require('../middlewares/zodValidate');
-const { CreateEventSchema } = require('../utils/zodSchemas');
 
 // ==============================
 // 🔹 Create Event
@@ -18,7 +16,6 @@ router.post(
   '/',
   verifyToken,
   authorizeRoles('ADMIN', 'LECTURER'),
-  zodValidate(CreateEventSchema),
   [
     body('title')
       .trim()
@@ -77,7 +74,6 @@ router.put(
   '/:id',
   verifyToken,
   authorizeRoles('ADMIN', 'LECTURER'),
-  zodValidate(CreateEventSchema),
   [
     body('title')
       .trim()
