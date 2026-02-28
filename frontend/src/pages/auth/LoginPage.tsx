@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, Mail, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { canApproveEvents } from '../../utils/permissions';
-import { findUserByEmail } from '../../data/mockData';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -23,13 +22,11 @@ export default function LoginPage() {
     try {
       const success = await login(email, password);
       if (success) {
-        // Role-based redirect after login
-        const loggedInUser = findUserByEmail(email);
+        // Role-based redirect after login — read user from store
+        const loggedInUser = useAuthStore.getState().user;
         if (loggedInUser && canApproveEvents(loggedInUser)) {
-          // ADMIN and HEAD_OF_DEPARTMENT land on the Approvals dashboard
           navigate('/approvals');
         } else {
-          // All other roles land on the shared Dashboard
           navigate('/');
         }
       } else {

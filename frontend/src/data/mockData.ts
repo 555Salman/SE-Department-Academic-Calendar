@@ -84,15 +84,8 @@ export const mockUsers: User[] = [
   },
 ];
 
-// Demo credentials for easy testing
-export const demoCredentials = {
-  admin: { email: 'admin@uoj.lk', password: 'admin123' },
-  hod: { email: 'hod@uoj.lk', password: 'hod123' },
-  lecturer: { email: 'rajesh@uoj.lk', password: 'staff123' },
-  instructor: { email: 'priya@uoj.lk', password: 'staff123' },
-  technicalOfficer: { email: 'dinesh@uoj.lk', password: 'to123' },
-  student: { email: 'arun@student.uoj.lk', password: 'student123' },
-};
+// Credentials are managed in the backend database.
+// Use the backend API to authenticate.
 
 // Mock Calendars
 export const mockCalendars: Calendar[] = [
@@ -567,35 +560,3 @@ export const mockAuditLogs: AuditLog[] = [
   },
 ];
 
-// Password hash simulation (in real app, use bcrypt)
-const hashPassword = (password: string): string => {
-  return btoa(password); // Simple base64 encoding for demo
-};
-
-export const mockUserCredentials: Record<string, string> = {
-  'admin@uoj.lk': hashPassword('admin123'),
-  'rajesh@uoj.lk': hashPassword('staff123'),
-  'priya@uoj.lk': hashPassword('staff123'),
-  'arun@student.uoj.lk': hashPassword('student123'),
-  'nisha@student.uoj.lk': hashPassword('student123'),
-  'kavin@student.uoj.lk': hashPassword('student123'),
-  'hod@uoj.lk': hashPassword('hod123'),
-  'amara@uoj.lk': hashPassword('staff123'),
-  'suresh@uoj.lk': hashPassword('staff123'),
-  'dinesh@uoj.lk': hashPassword('to123'),
-};
-
-// Export a helper to verify credentials
-export const verifyCredentials = (email: string, password: string): boolean => {
-  const stored = mockUserCredentials[email];
-  if (!stored) return false;
-  return stored === hashPassword(password);
-};
-
-// Export a helper to find user by email
-export const findUserByEmail = (email: string): User | undefined => {
-  return mockUsers.find(u => u.email === email);
-};
-
-// Mock verification code for password reset (demo)
-export const mockVerificationCode = '1234';

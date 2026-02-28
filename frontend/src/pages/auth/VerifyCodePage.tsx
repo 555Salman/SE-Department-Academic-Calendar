@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { mockVerificationCode } from '../../data/mockData';
 
 export default function VerifyCodePage() {
   const navigate = useNavigate();
@@ -68,11 +67,7 @@ export default function VerifyCodePage() {
 
     setIsLoading(false);
 
-    if (fullCode !== mockVerificationCode) {
-      navigate('/verification-error');
-      return;
-    }
-
+    // Token-based reset is handled via the link emailed by the backend.
     navigate('/reset-password', { state: { email, code: fullCode } });
   };
 
