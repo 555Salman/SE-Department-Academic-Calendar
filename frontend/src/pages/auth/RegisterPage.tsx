@@ -35,20 +35,16 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const success = await register({
+      await register({
         name: `${firstName} ${lastName}`,
         email,
         password,
         role: 'STUDENT',
       });
-
-      if (success) {
-        navigate('/');
-      } else {
-        setError('Email already exists');
-      }
-    } catch {
-      setError('An error occurred. Please try again.');
+      // On success, redirect to login so the user can sign in
+      navigate('/login', { state: { message: 'Account activated! Please log in.' } });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }

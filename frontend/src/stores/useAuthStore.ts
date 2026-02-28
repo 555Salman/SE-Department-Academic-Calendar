@@ -33,10 +33,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  register: async (): Promise<boolean> => {
-    // Account activation is handled by the backend signup flow:
-    // Admin pre-registers the email, then the user activates via /signup.
-    return false;
+  register: async (userData: Partial<User> & { password: string }): Promise<boolean> => {
+    try {
+      // Split name into first/last for the backend
+      const nameParts = (userData.name || '').trim().split(' ');
+      const first_name = nameParts[0] || '';
+      const last_name = nameParts.slice(1).join(' ') || '';
+
+      await axios.post(`${API_URL}/auth/signup`, {
+        email: userData.email,
+        first_name,
+        last_name,
+        password: userData.password,
+      });
+      return true;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        // Propagate server message so UI can show it
+        throw new Error(err.response?.data?.message || 'Registration failed');
+      }
+      throw err;
+    }
   },
 
   logout: () => {

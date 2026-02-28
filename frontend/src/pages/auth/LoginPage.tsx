@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, Mail, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { canApproveEvents } from '../../utils/permissions';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuthStore();
+
+  const successMessage = (location.state as { message?: string } | null)?.message || '';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -100,6 +103,13 @@ export default function LoginPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
             <p className="text-gray-500">Log in to access your Department Calendar.</p>
           </div>
+
+          {/* Success Message (e.g. after registration) */}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+              {successMessage}
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
