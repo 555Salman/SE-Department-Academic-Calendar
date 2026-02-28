@@ -6,7 +6,7 @@ const { sendResetEmail } = require('../services/emailService');
 
 
 // =======================
-// 🔐 SIGNUP (Activation)
+// 🔐 SIGNUP (Activation or Self-Registration for Students)
 // =======================
 exports.signup = async (req, res) => {
   const { email, first_name, last_name, password } = req.body;
@@ -18,26 +18,39 @@ exports.signup = async (req, res) => {
   db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
     if (err) return res.status(500).json({ message: 'Database error' });
 
-    if (results.length === 0) {
-      return res.status(403).json({
-        message: 'You are not authorized. Please contact admin.'
-      });
-    }
-
-    const user = results[0];
-
-    if (user.password !== null) {
-      return res.status(400).json({
-        message: 'Account already activated. Please login.'
-      });
-    }
-
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
+      // No existing record — create a new STUDENT account
+      if (results.length === 0) {
+        db.query(
+          `INSERT INTO users (first_name, last_name, email, password, role, is_active)
+           VALUES (?, ?, ?, ?, 'STUDENT', 1)`,
+          [first_name, last_name, email, hashedPassword],
+          (insertErr) => {
+            if (insertErr)
+              return res.status(500).json({ message: 'Error creating account' });
+
+            return res.status(201).json({
+              message: 'Account created successfully'
+            });
+          }
+        );
+        return;
+      }
+
+      const user = results[0];
+
+      if (user.password !== null) {
+        return res.status(400).json({
+          message: 'Account already activated. Please login.'
+        });
+      }
+
+      // Pre-registered account — activate it
       db.query(
-        `UPDATE users 
-         SET first_name = ?, last_name = ?, password = ?, is_active = 1 
+        `UPDATE users
+         SET first_name = ?, last_name = ?, password = ?, is_active = 1
          WHERE email = ?`,
         [first_name, last_name, hashedPassword, email],
         (updateErr) => {
