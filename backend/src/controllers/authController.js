@@ -24,8 +24,8 @@ exports.signup = async (req, res) => {
       // No existing record — create a new STUDENT account
       if (results.length === 0) {
         db.query(
-          `INSERT INTO users (first_name, last_name, email, password, role, is_active)
-           VALUES (?, ?, ?, ?, 'STUDENT', 1)`,
+          `INSERT INTO users (first_name, last_name, email, password, role, department, is_active)
+           VALUES (?, ?, ?, ?, 'STUDENT', 'Computer Engineering', 1)`,
           [first_name, last_name, email, hashedPassword],
           (insertErr) => {
             if (insertErr)
