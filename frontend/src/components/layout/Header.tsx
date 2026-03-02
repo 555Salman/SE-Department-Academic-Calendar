@@ -93,8 +93,8 @@ export default function Header({ onNewEvent }: HeaderProps) {
 
       {/* Right - Actions */}
       <div className="flex items-center gap-3">
-        {/* New Event Button */}
-        {onNewEvent && (
+        {/* New Event Button — hidden for Students */}
+        {onNewEvent && user?.role !== 'STUDENT' && (
           <button
             onClick={onNewEvent}
             className="btn-primary hidden sm:flex"

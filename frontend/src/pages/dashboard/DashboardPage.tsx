@@ -1,18 +1,32 @@
+import { useEffect } from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useEventStore } from '../../stores/useEventStore';
+import { canApproveEvents } from '../../utils/permissions';
 import { format, isToday, isThisWeek } from 'date-fns';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Calendar,
   Clock,
   MapPin,
   Filter,
-  Download
+  Download,
+  Wrench,
+  Users,
+  AlertTriangle,
+  FlaskConical
 } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const { events, calendars } = useEventStore();
+  const navigate = useNavigate();
+
+  // BUG_002: HOD and Admin have a dedicated Approvals Dashboard — redirect there
+  useEffect(() => {
+    if (user && canApproveEvents(user)) {
+      navigate('/approvals', { replace: true });
+    }
+  }, [user, navigate]);
 
   // Get today's events
   const todayEvents = events.filter(event => {
@@ -95,6 +109,211 @@ export default function DashboardPage() {
 
   const nonStudentRoles = ['STAFF', 'LECTURER', 'INSTRUCTOR', 'TECHNICAL_OFFICER', 'HEAD_OF_DEPARTMENT', 'ADMIN'];
   const isStaffOrAdmin = user ? nonStudentRoles.includes(user.role) : false;
+
+  // BUG_003: Technical Officer gets a dedicated Lab Management Dashboard
+  if (user?.role === 'TECHNICAL_OFFICER') {
+    const labSessionsToday = todayEvents.filter(e => e.category === 'LAB');
+    const labSessionsWeek = upcomingEvents.filter(e => e.category === 'LAB');
+
+    return (
+      <div className="p-6">
+        {/* TO Page Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Lab Management Dashboard</h1>
+            <p className="text-gray-500 mt-1">{format(new Date(), 'EEEE, dd MMMM yyyy')}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="btn-outline">
+              <Filter className="w-4 h-4" />
+              Filter
+            </button>
+            <button className="btn-outline">
+              <Download className="w-4 h-4" />
+              Export
+            </button>
+            <Link to="/calendar" className="btn-primary">
+              <Calendar className="w-4 h-4" />
+              Lab Calendar
+            </Link>
+          </div>
+        </div>
+
+        {/* TO Quick Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="card p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <FlaskConical className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Lab Sessions Today</p>
+              <p className="text-2xl font-bold text-gray-900">{labSessionsToday.length}</p>
+            </div>
+          </div>
+          <div className="card p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Sessions This Week</p>
+              <p className="text-2xl font-bold text-gray-900">{labSessionsWeek.length}</p>
+            </div>
+          </div>
+          <div className="card p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+              <Wrench className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Equipment Requests</p>
+              <p className="text-2xl font-bold text-gray-900">3</p>
+            </div>
+          </div>
+          <div className="card p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Active Students</p>
+              <p className="text-2xl font-bold text-gray-900">120</p>
+            </div>
+          </div>
+        </div>
+
+        {/* TO Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Lab Sessions Today */}
+          <div className="lg:col-span-1">
+            <div className="card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-gray-900">Lab Sessions Today</h2>
+                <Link to="/calendar" className="text-sm text-primary hover:text-primary-600">View all</Link>
+              </div>
+              {labSessionsToday.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <FlaskConical className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                  <p>No lab sessions scheduled today</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {labSessionsToday.map((event) => (
+                    <div key={event.id} className="p-3 rounded-lg border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all">
+                      <div className="flex items-start gap-3">
+                        <div className="w-1 min-h-[60px] rounded-full bg-emerald-500" />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-gray-900 truncate">{event.title}</h3>
+                          <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            {format(new Date(event.start), 'h:mm a')} – {format(new Date(event.end), 'h:mm a')}
+                          </div>
+                          {event.location && (
+                            <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                              <MapPin className="w-3.5 h-3.5" />
+                              {event.location}
+                            </div>
+                          )}
+                          {event.courseCode && (
+                            <span className="badge-gray mt-2 inline-block">{event.courseCode}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Equipment Management */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-gray-900">Equipment Requests</h2>
+                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">3 pending</span>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { item: 'Oscilloscope #4', lab: 'Lab A', requester: 'Prof. Raj', status: 'Pending' },
+                  { item: 'Soldering Kit', lab: 'Lab B', requester: 'Instructor Priya', status: 'Pending' },
+                  { item: 'Raspberry Pi x5', lab: 'Lab C', requester: 'Dr. Dinesh', status: 'Pending' },
+                ].map((req, i) => (
+                  <div key={i} className="p-3 rounded-lg border border-gray-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-medium text-gray-900 text-sm">{req.item}</h3>
+                      <span className="status-pending text-xs">Pending</span>
+                    </div>
+                    <p className="text-xs text-gray-500">{req.lab} · {req.requester}</p>
+                    <div className="flex gap-2 mt-2">
+                      <button className="btn-success btn-sm flex-1">Approve</button>
+                      <button className="btn-outline btn-sm flex-1">Decline</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Alerts & Notifications */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-gray-900">Alerts & Messages</h2>
+                <Link to="/notifications" className="text-sm text-primary hover:text-primary-600">Latest</Link>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { icon: AlertTriangle, color: 'text-red-500 bg-red-50', title: 'Lab A projector offline', desc: 'Reported by Dr. Raj at 8:00 AM', time: '1h ago' },
+                  { icon: Wrench, color: 'text-orange-500 bg-orange-50', title: 'Equipment calibration due', desc: 'Oscilloscopes in Lab B need recalibration', time: '3h ago' },
+                  { icon: Users, color: 'text-blue-500 bg-blue-50', title: 'New student batch registered', desc: '45 students added to COMP301', time: 'Yesterday' },
+                ].map((alert, i) => (
+                  <div key={i} className="p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all cursor-pointer">
+                    <div className="flex items-start gap-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${alert.color}`}>
+                        <alert.icon className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 text-sm">{alert.title}</h3>
+                        <p className="text-xs text-gray-500 mt-0.5">{alert.desc}</p>
+                        <p className="text-xs text-gray-400 mt-1">{alert.time}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Upcoming Lab Sessions */}
+            <div className="card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-gray-900">Upcoming Lab Sessions</h2>
+                <Link to="/calendar" className="text-sm text-primary hover:text-primary-600">View</Link>
+              </div>
+              {labSessionsWeek.length === 0 ? (
+                <p className="text-gray-500 text-sm">No lab sessions this week</p>
+              ) : (
+                <div className="space-y-3">
+                  {labSessionsWeek.map((event) => (
+                    <div key={event.id} className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-emerald-50 rounded-lg flex flex-col items-center justify-center">
+                        <span className="text-xs text-emerald-700 font-medium">{format(new Date(event.start), 'dd')}</span>
+                        <span className="text-xs text-emerald-600">{format(new Date(event.start), 'MMM')}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-900 truncate">{event.title}</h4>
+                        <p className="text-xs text-gray-500">
+                          {format(new Date(event.start), 'h:mm a')}
+                          {event.location && ` · ${event.location}`}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">

@@ -1,7 +1,22 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useAuthStore } from './stores/useAuthStore';
 import { canApproveEvents, isStaffOrAdmin } from './utils/permissions';
 import type { UserRole } from './types';
+
+/** Simple placeholder for static info pages (Privacy, Terms, Consent) */
+function InfoPage({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
+      <div className="max-w-2xl w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">{title}</h1>
+        <p className="text-gray-600 leading-relaxed">{body}</p>
+        <Link to="/login" className="mt-6 inline-block text-sm text-primary hover:underline">
+          ← Back to Login
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 // Auth Pages
 import {
@@ -126,6 +141,26 @@ function App() {
         } />
         <Route path="/profile" element={
           <PrivateRoute><ProfilePage /></PrivateRoute>
+        } />
+
+        {/* ── Static Info Pages (footer links) ────────────────────────── */}
+        <Route path="/privacy" element={
+          <InfoPage
+            title="Privacy Policy"
+            body="This Privacy Policy describes how the Department Academic Calendar collects, uses, and protects your personal information. We are committed to ensuring that your privacy is protected. Any information you provide will only be used in accordance with this policy."
+          />
+        } />
+        <Route path="/terms" element={
+          <InfoPage
+            title="Terms of Service"
+            body="By accessing and using the Department Academic Calendar system, you accept and agree to be bound by these Terms of Service. The system is intended for use by authorised students, staff, and faculty of the department only."
+          />
+        } />
+        <Route path="/consent" element={
+          <InfoPage
+            title="Consent Preferences"
+            body="You can manage your data consent preferences here. We use essential cookies to keep you logged in and to maintain your session. No third-party tracking or advertising cookies are used in this system."
+          />
         } />
 
         {/* ── Catch-all ───────────────────────────────────────────────── */}
